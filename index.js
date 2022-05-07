@@ -24,7 +24,23 @@ async function run() {
 
     const productCollection = client.db("kingInventory").collection("products");
 
-    app.post("/products", (req, res) => {});
+    // get all products
+    app.get("/products", async (req, res) => {
+      const query = {};
+
+      const cursor = productCollection.find(query);
+      const products = await cursor.toArray();
+      res.send(products);
+    });
+
+    // Post a product
+    app.post("/products", async (req, res) => {
+      const product = req.body;
+
+      const result = await productCollection.insertOne(product);
+      console.log(product);
+      res.send(result);
+    });
 
     // console.log(`product inserted with id ${result.insertedId} `);
   } finally {
