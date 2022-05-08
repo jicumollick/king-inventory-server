@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 require("dotenv").config();
@@ -25,6 +26,15 @@ async function run() {
     await client.connect();
 
     const productCollection = client.db("kingInventory").collection("products");
+
+    // Auth JWT
+    app.post("/login", async (req, res) => {
+      const user = req.body;
+      const accesToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "1d",
+      });
+      res.send({ accesToken });
+    });
 
     // get all products
     app.get("/products", async (req, res) => {
